@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeArena · 在线刷题</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="logo-mark">&lt;/&gt;</span>
+      <span class="brand-name">CodeArena</span>
+      <span class="brand-sub">在线刷题练习场</span>
+    </div>
+    <div class="header-right">
+      <div class="progress-chip" id="progressChip">已解决 0 / 119</div>
+      <button class="ghost-btn" id="resetProgress" type="button">重置进度</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- 左侧：统一题目列表，题型按钮决定显示哪类题 -->
+    <aside class="panel side-panel">
+      <div class="panel-head">
+        <h2>题目列表 <span class="count-badge" id="listCount">119</span></h2>
+        <div class="type-tabs" id="typeTabs">
+          <button class="type-btn active" data-type="code" type="button">编程题</button>
+          <button class="type-btn" data-type="quiz" type="button">选择题</button>
+        </div>
+        <div class="search-row">
+          <input id="searchInput" type="search" placeholder="搜索题号或标题" autocomplete="off" aria-label="搜索题目" />
+        </div>
+        <div class="filters" id="difficultyFilters">
+          <button class="filter-btn active" data-filter="all" type="button">全部</button>
+          <button class="filter-btn" data-filter="简单" type="button">简单</button>
+          <button class="filter-btn" data-filter="中等" type="button">中等</button>
+          <button class="filter-btn" data-filter="困难" type="button">困难</button>
+        </div>
+        <div class="company-filters" id="companyFilters">
+          <button class="company-btn active" data-company="all" type="button">全部公司</button>
+          <button class="company-btn" data-company="华为" type="button">华为</button>
+          <button class="company-btn" data-company="字节" type="button">字节</button>
+          <button class="company-btn" data-company="腾讯" type="button">腾讯</button>
+          <button class="company-btn" data-company="阿里" type="button">阿里</button>
+          <button class="company-btn" data-company="美团" type="button">美团</button>
+          <button class="company-btn" data-company="移动" type="button">移动</button>
+          <button class="company-btn" data-company="通用" type="button">通用</button>
+        </div>
+        <div id="paperArea" hidden>
+          <div class="paper-company-filters" id="paperCompanyFilters"></div>
+          <div class="paper-filters" id="paperFilters"></div>
+        </div>
+      </div>
+      <div class="item-list" id="itemList"></div>
+      <div class="pager" id="listPager"></div>
+    </aside>
+
+    <!-- 中间：编程题描述 或 单道选择题 -->
+    <section class="panel content-panel">
+      <div class="content-scroll" id="codeContent">
+        <div id="problemHeader"></div>
+        <div id="problemBody"></div>
+      </div>
+      <div class="content-scroll quiz-content" id="quizContent" hidden>
+        <div class="paper-name" id="quizPaperName"></div>
+        <div class="quiz-question-head">
+          <span class="q-index" id="quizQuestionIndex">1</span>
+          <span class="q-meta" id="quizQuestionMeta"></span>
+        </div>
+        <div class="quiz-question-text" id="quizQuestionText"></div>
+        <div class="options" id="quizOptions"></div>
+        <div class="quiz-step-row">
+          <button class="ghost-btn" id="prevQuiz" type="button">上一题</button>
+          <button class="secondary-btn" id="nextQuiz" type="button">下一题</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 右侧：代码编辑器 或 选择题作答进度与批改结果 -->
+    <section class="panel work-panel" id="codePanel">
+      <div class="code-toolbar">
+        <div class="tabs">
+          <button class="tab active" data-tab="code" type="button">代码</button>
+          <button class="tab" data-tab="solution" type="button">题解</button>
+        </div>
+        <div class="toolbar-right">
+          <button class="runtime-status loading" id="runtimeStatus" type="button" title="点击重新加载">正在加载 Python 运行时…</button>
+          <span class="language-badge">Python 3 · ACM 模式</span>
+        </div>
+      </div>
+      <div class="editor-wrap" id="editorWrap">
+        <div class="line-numbers" id="lineNumbers" aria-hidden="true">1</div>
+        <textarea id="codeEditor" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="代码编辑器"></textarea>
+      </div>
+      <div class="console" id="console">
+        <div class="console-empty">代码区默认为空白，请从 import 开始自己写完整程序。点击「运行」查看用例结果，或「提交」判题。</div>
+      </div>
+      <div class="code-actions">
+        <button class="ghost-btn" id="insertTemplate" type="button">插入 ACM 模板</button>
+        <button class="ghost-btn" id="resetCode" type="button">清空代码</button>
+        <div class="action-spacer"></div>
+        <button class="secondary-btn" id="runCode" type="button">运行</button>
+        <button class="primary-btn" id="submitCode" type="button">提交</button>
+      </div>
+    </section>
+
+    <section class="panel work-panel quiz-work-panel" id="quizPanel" hidden>
+      <div class="quiz-toolbar">
+        <div><strong>整套答题模式</strong><span class="toolbar-hint">全部作答后统一批改，提交前可修改</span></div>
+        <div class="quiz-toolbar-actions">
+          <span id="quizAnswered">已答 0 / 35</span>
+          <button class="primary-btn" id="submitQuiz" type="button">提交批改</button>
+        </div>
+      </div>
+      <div class="quiz-result-body" id="quizResult">提交后显示得分、你的答案、正确答案与逐题解析。</div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="problems.js"></script>
+  <script src="mcqs.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
